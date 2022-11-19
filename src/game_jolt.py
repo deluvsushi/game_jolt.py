@@ -7,7 +7,7 @@ class GameJolt:
 			game_id: int,
 			username: str,
 			user_token: str,
-			private_key: str):
+			private_key: str) -> None:
 		self.api = "https://api.gamejolt.com/api/game/v1_2"
 		self.headers = {
 			"user-agent": "Mozilla/5.0 (Linux; Android 7.1.2; SM-G9880 Build/RP1A.2007201.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36"
@@ -17,40 +17,40 @@ class GameJolt:
 		self.user_token = user_token
 		self.private_key = private_key
 
-	def generate_signature(self, path: str):
+	def generate_signature(self, path: str) -> str:
 		return md5(f"{self.api}{path}{self.private_key}".encode()).hexdigest()
 	
-	def get_user(self):
+	def get_user(self) -> dict:
 		path = f"/users/?game_id={self.game_id}&username={self.username}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 			
-	def authenticate_user(self):
+	def authenticate_user(self) -> dict:
 		path = f"/users/auth/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def open_session(self):
+	def open_session(self) -> dict:
 		path = f"/sessions/open/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 
-	def ping_session(self, status: str = "active"):
+	def ping_session(self, status: str = "active") -> dict:
 		path = f"/sessions/ping/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}&status={status}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def check_session(self):
+	def check_session(self) -> dict:
 		path = f"/sessions/check/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def close_session(self):
+	def close_session(self) -> dict:
 		path = f"/sessions/close/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
@@ -62,7 +62,7 @@ class GameJolt:
 			table_id: int = None,
 			guest: str = None,
 			better_than: int = None,
-			worse_than: int = None):
+			worse_than: int = None) -> dict:
 		path = f"/scores/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}"
 		if limit:
 			path += f"&limit={limit}"
@@ -78,7 +78,7 @@ class GameJolt:
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def get_score_tables(self):
+	def get_score_tables(self) -> dict:
 		path = f"/scores/tables/?game_id={self.game_id}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
@@ -90,7 +90,7 @@ class GameJolt:
 			sort: int,
 			table_id: int = None,
 			extra_data: str = None,
-			guest: str = None):
+			guest: str = None) -> dict:
 		path = f"/scores/add/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}&score={score}&sort={sort}"
 		if table_id:
 			path += f"&table_id={table_id}"
@@ -102,7 +102,10 @@ class GameJolt:
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 
-	def get_score_rank(self, sort: int, table_id: int = None):
+	def get_score_rank(
+			self,
+			sort: int,
+			table_id: int = None) -> dict:
 		path = f"/scores/get-rank/?game_id={self.game_id}&sort={sort}"
 		if table_id:
 			path += f"&table_id={table_id}"
@@ -110,7 +113,10 @@ class GameJolt:
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def get_trophy(self, trophy_id: int = None, achieved: bool = False):
+	def get_trophy(
+			self,
+			trophy_id: int = None,
+			achieved: bool = False) -> dict:
 		path = f"/trophies/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}&achieved={achieved}"
 		if trophy_id:
 			path += f"&trophy_id={trophy_id}"
@@ -118,20 +124,23 @@ class GameJolt:
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def add_achieved(self, trophy_id: int):
+	def add_achieved(self, trophy_id: int) -> dict:
 		path = f"/trophies/add-achieved/?game_id={game_id}&username={self.username}&user_token={self.user_token}&trophy_id={trophy_id}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def remove_achieved(self, trophy_id: int):
+	def remove_achieved(self, trophy_id: int) -> dict:
 		path = f"/trophies/remove-achieved/?game_id={game_id}&username={self.username}&user_token={self.user_token}&trophy_id={trophy_id}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def set_data(self, key: str, data: str,
-		user_info_only: bool = False):
+	def set_data(
+			self,
+			key: str,
+			data: str,
+			user_info_only: bool = False) -> dict:
 		path = f"/data-store/set/?game_id={self.game_id}&key={key}&data={data}"
 		if user_info_only:
 			path += f"&username={self.username}&user_token={self.user_token}"
@@ -144,7 +153,7 @@ class GameJolt:
 			key: str,
 			operation: str,
 			value: int,
-			user_info_only: bool = False):
+			user_info_only: bool = False) -> dict:
 		path = f"/data-store/update/?game_id={self.game_id}&key={key}&operation={operation}&value={value}"
 		if user_info_only:
 			path += f"&username={self.username}&user_token={self.user_token}"
@@ -152,13 +161,16 @@ class GameJolt:
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def remove_data(self, key: str):
+	def remove_data(self, key: str) -> dict:
 		path = f"/data-store/remove/?game_id={self.game_id}&key={key}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 		
-	def get_data(self, key: str, user_info_only: bool = False):
+	def get_data(
+			self,
+			key: str,
+			user_info_only: bool = False) -> dict:
 		path = f"/data-store/?game_id={self.game_id}&key={key}"
 		if user_info_only:
 			path += f"&username={self.username}&user_token={self.user_token}"
@@ -166,19 +178,19 @@ class GameJolt:
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def get_keys(self):
+	def get_keys(self) -> dict:
 		path = f"/data-store/get-keys/?game_id={self.game_id}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def get_friends_list(self):
+	def get_friends_list(self) -> dict:
 		path = f"/friends/?game_id={self.game_id}&username={self.username}&user_token={self.user_token}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
 			headers=self.headers).json()
 	
-	def get_server_time(self):
+	def get_server_time(self) -> dict:
 		path = f"/time/?game_id={self.game_id}"
 		return requests.get(
 			f"{self.api}{path}&signature={self.generate_signature(path)}",
